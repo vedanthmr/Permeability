@@ -43,5 +43,6 @@ models/*
 
 # Raw large datasets or temp scratch scripts
 data/prompt_injection_dataset/
+data/prompt_injection_dataset/*
 scripts/inspect_schema.py
 scripts/train_and_eval_test.py

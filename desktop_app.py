@@ -81,7 +81,7 @@ def main():
         print("[Desktop] Opening native window via pywebview...")
         window = webview.create_window(
             title="AdaptShield — AI Prompt & Document Security",
-            url=url,
+            url=f"{url}?mode=desktop",
             width=1280,
             height=820,
             min_size=(960, 640),
@@ -96,7 +96,7 @@ def main():
     # Fallback to web browser if pywebview fails
     if not opened_webview:
         print("[Desktop] Falling back to default web browser...")
-        webbrowser.open(url)
+        webbrowser.open(f"{url}?mode=desktop")
         print(f"AdaptShield is active at {url}. Keep this window open.")
         try:
             while True:
@@ -107,3 +107,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

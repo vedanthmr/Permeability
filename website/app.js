@@ -809,7 +809,8 @@ function renderMarkdown(raw) {
 
 const termCloseBtn = document.getElementById("termCloseBtn");
 if (termCloseBtn) {
-  termCloseBtn.onclick = () => {
+  termCloseBtn.onclick = (e) => {
+    e.stopPropagation();
     const popup = document.getElementById("macosTerminalPopup");
     if (popup) {
       popup.classList.add("popup-hidden");
@@ -817,6 +818,49 @@ if (termCloseBtn) {
     }
   };
 }
+
+// Draggable terminal header
+(function initDraggableTerminal() {
+  const popup = document.getElementById("macosTerminalPopup");
+  const header = document.getElementById("terminalHeader");
+  if (!popup || !header) return;
+
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let initialLeft = 0, initialTop = 0;
+
+  header.addEventListener("mousedown", (e) => {
+    if (e.target.closest("#termCloseBtn")) return;
+    isDragging = true;
+    header.style.cursor = "grabbing";
+    document.body.style.userSelect = "none";
+    const rect = popup.getBoundingClientRect();
+    initialLeft = rect.left;
+    initialTop = rect.top;
+    startX = e.clientX;
+    startY = e.clientY;
+    popup.style.right = "auto";
+    popup.style.bottom = "auto";
+    popup.style.left = initialLeft + "px";
+    popup.style.top = initialTop + "px";
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    popup.style.left = Math.max(8, Math.min(initialLeft + dx, window.innerWidth - popup.offsetWidth - 8)) + "px";
+    popup.style.top = Math.max(8, Math.min(initialTop + dy, window.innerHeight - popup.offsetHeight - 8)) + "px";
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      header.style.cursor = "grab";
+      document.body.style.userSelect = "";
+    }
+  });
+})();
 
 // Initial navigation on script execution
 navigate(location.pathname + location.search, false);

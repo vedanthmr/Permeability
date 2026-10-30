@@ -5,43 +5,45 @@
    Fonts: Inter (sans) · JetBrains Mono (mono)
 ═══════════════════════════════════════════════════════ */
 
-/* ── 1. DESIGN TOKENS (Emerald Prestige Theme) ── */
+/* ── 1. DESIGN TOKENS (Void Sentinel Theme) ── */
 :root {
   /* backgrounds */
-  --bg:          #081C15;
-  --bg-alt:      #0d281e;
-  --card:        #1B4432;
-  --card-dk:     #123224;
-  --well:        #081C15;
+  --bg:          #050807;
+  --bg-alt:      #090E0B;
+  --card:        #111A15;
+  --card-dk:     #0D1511;
+  --well:        #050807;
   /* borders */
-  --border:      rgba(235, 242, 250, 0.08);
-  --border-hov:  rgba(235, 242, 250, 0.20);
+  --border:      rgba(168, 181, 173, 0.14);
+  --border-hov:  rgba(182, 255, 59, 0.35);
   /* accent */
-  --accent:      #036666;
-  --accent-dk:   #024747;
-  --accent-glow: rgba(3, 102, 102, 0.35);
-  --accent-bord: rgba(114, 239, 221, 0.4);
+  --accent:      #B6FF3B;
+  --accent-dk:   #8AC427;
+  --accent-glow: rgba(182, 255, 59, 0.25);
+  --accent-bord: rgba(182, 255, 59, 0.4);
+  --accent-sec:  #55FF9A;
+  --mint:        #B8FFE0;
   /* text */
-  --txt:         #EBF2FA;
-  --txt2:        #cbd5e1;
-  --txt3:        #9DB4C0;
-  --txt4:        #6D8A96;
+  --txt:         #F3F7F5;
+  --txt2:        #B8FFE0;
+  --txt3:        #A8B5AD;
+  --txt4:        #67766E;
   /* verdicts */
-  --safe:        #27c93f;
-  --safe-bg:     rgba(39, 201, 63, 0.12);
-  --warn:        #FBB02D;
-  --warn-bg:     rgba(251, 176, 45, 0.12);
-  --block:       #ef4444;
-  --block-bg:    rgba(239, 68, 68, 0.14);
-  --div-col:     #FBB02D;
+  --safe:        #55FF9A;
+  --safe-bg:     rgba(85, 255, 154, 0.12);
+  --warn:        #FFBF47;
+  --warn-bg:     rgba(255, 191, 71, 0.12);
+  --block:       #FF4D6D;
+  --block-bg:    rgba(255, 77, 109, 0.15);
+  --div-col:     #FFBF47;
   /* nav */
-  --nav-bg:      rgba(8, 28, 21, 0.88);
+  --nav-bg:      rgba(5, 8, 7, 0.88);
   /* misc */
   --radius-sm:   0.5rem;
   --radius:      1rem;
   --radius-lg:   1.25rem;
   --radius-pill: 9999px;
-  --shadow-card: 0 10px 30px rgba(0,0,0,0.35);
+  --shadow-card: 0 10px 30px rgba(0,0,0,0.55);
 }
 
 [data-theme="light"] {
@@ -1538,11 +1540,11 @@ code {
   z-index: 9999;
   width: 390px;
   max-width: calc(100vw - 32px);
-  background: rgba(8, 28, 21, 0.94);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(3, 102, 102, 0.35);
+  background: rgba(17, 26, 21, 0.95);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(182, 255, 59, 0.35);
   border-radius: 10px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(3, 102, 102, 0.25);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 20px rgba(182, 255, 59, 0.12);
   overflow: hidden;
   font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
   font-size: 12px;
@@ -1558,29 +1560,34 @@ code {
 }
 
 .macos-terminal-popup.verdict-safe {
-  border-color: #27c93f;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(39, 201, 63, 0.35);
+  border-color: #55FF9A;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(85, 255, 154, 0.35);
 }
 
 .macos-terminal-popup.verdict-warn {
-  border-color: #FBB02D;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(251, 176, 45, 0.4);
+  border-color: #FFBF47;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 191, 71, 0.4);
 }
 
 .macos-terminal-popup.verdict-malicious {
-  border-color: #ef4444;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(239, 68, 68, 0.55);
+  border-color: #FF4D6D;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 77, 109, 0.55);
 }
 
 .terminal-header {
   height: 32px;
-  background: rgba(13, 17, 23, 0.9);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 14, 11, 0.95);
+  border-bottom: 1px solid rgba(168, 181, 173, 0.15);
   display: flex;
   align-items: center;
   padding: 0 12px;
   position: relative;
+  cursor: grab;
   user-select: none;
+}
+
+.terminal-header:active {
+  cursor: grabbing;
 }
 
 .traffic-lights {
@@ -1591,31 +1598,21 @@ code {
   left: 12px;
 }
 
-.traffic-light {
+.traffic-light.light-red {
   width: 11px;
   height: 11px;
   border-radius: 50%;
   display: inline-block;
   cursor: pointer;
-  border: none;
+  background: #FF4D6D;
+  border: 1px solid rgba(255, 77, 109, 0.7);
+  box-shadow: 0 0 8px rgba(255, 77, 109, 0.4);
   outline: none;
+  transition: transform 0.12s;
 }
 
-.light-red {
-  background: #ff5f56;
-  border: 1px solid #e0443e;
-}
-
-.light-yellow {
-  background: #ffbd2e;
-  border: 1px solid #dea123;
-  cursor: default;
-}
-
-.light-green {
-  background: #27c93f;
-  border: 1px solid #1aab29;
-  cursor: default;
+.traffic-light.light-red:hover {
+  transform: scale(1.15);
 }
 
 .terminal-title {

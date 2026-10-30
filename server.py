@@ -1099,12 +1099,13 @@ if __name__ == "__main__":
                 time.sleep(0.3)
 
         opened_webview = False
+        desktop_url = f"{url}?mode=desktop"
         try:
             import webview
             print("[Desktop] Initializing pywebview native window...")
             webview.create_window(
                 "AdaptShield — AI Prompt & Document Security",
-                url,
+                desktop_url,
                 width=1280,
                 height=820,
                 min_size=(960, 640)
@@ -1115,8 +1116,8 @@ if __name__ == "__main__":
             print(f"[Desktop] pywebview initialization failed ({e}), opening default web browser...")
 
         if not opened_webview:
-            webbrowser.open(url)
-            print(f"AdaptShield active at {url}. Press Ctrl+C in console to terminate.")
+            webbrowser.open(desktop_url)
+            print(f"AdaptShield active at {desktop_url}. Press Ctrl+C in console to terminate.")
             try:
                 while True:
                     time.sleep(1)

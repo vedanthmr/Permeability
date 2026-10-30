@@ -6,7 +6,7 @@
 <title>AdaptShield | Dual-Layer LLM Prompt Defense</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -747,11 +747,9 @@
 
 <!-- ═══════════════════════════ TOP-RIGHT macOS TERMINAL HEURISTIC POPUP ═══════════════════════════ -->
 <aside class="macos-terminal-popup" id="macosTerminalPopup" aria-live="assertive" hidden>
-  <div class="terminal-header">
+  <div class="terminal-header" id="terminalHeader">
     <div class="traffic-lights">
       <button class="traffic-light light-red" id="termCloseBtn" title="Close telemetry terminal" aria-label="Close telemetry"></button>
-      <span class="traffic-light light-yellow"></span>
-      <span class="traffic-light light-green"></span>
     </div>
     <div class="terminal-title">zsh — adaptshield-telemetry — 80×24</div>
   </div>
