@@ -1,0 +1,16 @@
+venv/
+dist/
+build/
+*.spec
+uploads/
+models/
+hf_token.txt
+config.env
+.env
+uploads/
+__pycache__/
+*.pyc
+*.exe
+website/app.broken.js
+config.env
+cloudflared.exe
