@@ -17,7 +17,8 @@ from embedding_engine import get_embedding_engine, cosine_similarity
 
 warnings.filterwarnings("ignore")
 
-_local_model = Path(__file__).resolve().parent / "models" / "all-MiniLM-L6-v2"
+BASE_DIR = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent)).resolve()
+_local_model = BASE_DIR / "models" / "all-MiniLM-L6-v2"
 EMBEDDING_MODEL_NAME = str(_local_model) if _local_model.exists() else "all-MiniLM-L6-v2"
 TOP_K = 5
 
@@ -26,8 +27,6 @@ BLOCK_THRESHOLD = 0.5   # r1 above this = attack
 WARN_THRESHOLD = 0.3    # r1 between WARN and BLOCK = suspicious
 SEM_LOW = 0.50          # similarity at or below this counts as 0 risk
 SEM_HIGH = 0.80         # similarity at or above this counts as full risk
-
-BASE_DIR = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
 
 # ==================== ATTACK EXAMPLES ====================
 # These are always loaded. data/jailbreak_prompts.json (if it exists) is merged

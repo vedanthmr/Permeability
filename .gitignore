@@ -1,16 +1,47 @@
+# Python Virtual Environments
+.venv/
 venv/
-dist/
-build/
-*.spec
-uploads/
-models/
-hf_token.txt
-config.env
-.env
-uploads/
+env/
+ENV/
+.env/
+
+# Python Cache & Bytecode
 __pycache__/
-*.pyc
-*.exe
-website/app.broken.js
+*.py[cod]
+*$py.class
+*.pyo
+
+# Build & Packaging Outputs
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Dynamic Runtime Directories & Temporary Files
+uploads/*
+!uploads/.gitkeep
+sessions/*
+!sessions/.gitkeep
+
+# Environment variables, Secrets, and Tokens
+.env
 config.env
+*.env
+*.key
+*.pem
+hf_token.txt
+*token*.txt
+
+# Executables & Cloudflared
+*.exe
 cloudflared.exe
+
+# Model Caches (allow trained prompt injection model and configs)
+models/*
+!models/trained_prompt_injection/
+!models/trained_prompt_injection/*
+
+# Raw large datasets or temp scratch scripts
+data/prompt_injection_dataset/
+scripts/inspect_schema.py
+scripts/train_and_eval_test.py

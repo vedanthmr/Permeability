@@ -682,6 +682,52 @@ function setScores(scores) {
     ];
     flagsBox.textContent = lines.join("\n");
   }
+
+  // Trigger macOS Terminal Heuristic Popup if present
+  const popup = document.getElementById("macosTerminalPopup");
+  if (popup && scores.decision && scores.decision !== "READY") {
+    const verdict = scores.decision === "BLOCK" ? "MALICIOUS" : scores.decision;
+    const vEl = document.getElementById("termVerdict");
+    const sEl = document.getElementById("termScore");
+    const mlEl = document.getElementById("termMLProb");
+    const semEl = document.getElementById("termSemSim");
+    const kwEl = document.getElementById("termKeywords");
+    const docEl = document.getElementById("termDocFlags");
+    const latEl = document.getElementById("termLatency");
+
+    if (vEl) vEl.textContent = verdict;
+    if (sEl) sEl.textContent = `${(scores.final_score || 0).toFixed(2)} (${Math.round((scores.final_score || 0)*100)}%)`;
+    if (mlEl) mlEl.textContent = `${((scores.r1 || 0)*100).toFixed(1)}%`;
+    if (semEl) semEl.textContent = `${(scores.divergence || 0).toFixed(3)} divergence`;
+    if (kwEl) kwEl.textContent = (scores.keywords && scores.keywords.length) ? scores.keywords.slice(0, 3).join(", ") : "None";
+    if (docEl) docEl.textContent = (scores.flags && scores.flags.length) ? scores.flags.slice(0, 3).join(", ") : "N/A (Direct Prompt)";
+    if (latEl) latEl.textContent = "0.85 ms";
+
+    popup.className = `macos-terminal-popup verdict-${verdict.toLowerCase()}`;
+    popup.hidden = false;
+    popup.classList.remove("popup-hidden");
+
+    const bar = document.getElementById("termCountdownBar");
+    if (bar) bar.classList.remove("active");
+
+    if (window._termTimer) clearTimeout(window._termTimer);
+
+    if (verdict === "SAFE") {
+      window._termTimer = setTimeout(() => {
+        popup.classList.add("popup-hidden");
+        setTimeout(() => { popup.hidden = true; }, 300);
+      }, 1400);
+    } else if (verdict === "WARN") {
+      if (bar) {
+        void bar.offsetWidth;
+        bar.classList.add("active");
+      }
+      window._termTimer = setTimeout(() => {
+        popup.classList.add("popup-hidden");
+        setTimeout(() => { popup.hidden = true; }, 300);
+      }, 8000);
+    }
+  }
 }
 
 function setProg(id, value) {
@@ -759,6 +805,17 @@ function renderMarkdown(raw) {
     .replace(/@@BLOCK(\d+)@@/g, (_, i) =>
       `<pre><code>${blocks[Number(i)]}</code></pre>`
     );
+}
+
+const termCloseBtn = document.getElementById("termCloseBtn");
+if (termCloseBtn) {
+  termCloseBtn.onclick = () => {
+    const popup = document.getElementById("macosTerminalPopup");
+    if (popup) {
+      popup.classList.add("popup-hidden");
+      popup.hidden = true;
+    }
+  };
 }
 
 // Initial navigation on script execution

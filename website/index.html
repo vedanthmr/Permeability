@@ -26,6 +26,7 @@
       <li><a href="/features"      data-link data-page="features">Features</a></li>
       <li><a href="/how-it-works"  data-link data-page="how-it-works">How It Works</a></li>
       <li><a href="/architecture"  data-link data-page="architecture">Architecture</a></li>
+      <li><a href="/download/windows" class="nav-download-link" title="Download standalone Windows .exe"><span>Download (.exe)</span></a></li>
       <li><a href="/demo"          data-link data-page="demo" class="nav-cta">Demo</a></li>
     </ul>
 
@@ -743,6 +744,55 @@
     </div>
   </div>
 </footer>
+
+<!-- ═══════════════════════════ TOP-RIGHT macOS TERMINAL HEURISTIC POPUP ═══════════════════════════ -->
+<aside class="macos-terminal-popup" id="macosTerminalPopup" aria-live="assertive" hidden>
+  <div class="terminal-header">
+    <div class="traffic-lights">
+      <button class="traffic-light light-red" id="termCloseBtn" title="Close telemetry terminal" aria-label="Close telemetry"></button>
+      <span class="traffic-light light-yellow"></span>
+      <span class="traffic-light light-green"></span>
+    </div>
+    <div class="terminal-title">zsh — adaptshield-telemetry — 80×24</div>
+  </div>
+  <div class="terminal-body" id="termBody">
+    <div class="term-command-line">
+      <span class="term-prompt">$</span>
+      <span class="term-cmd">adaptshield --inspect-payload</span>
+    </div>
+    <div class="term-output-grid">
+      <div class="term-row">
+        <span class="term-key">VERDICT:</span>
+        <span class="term-val term-verdict" id="termVerdict">SAFE</span>
+      </div>
+      <div class="term-row">
+        <span class="term-key">UNIFIED RISK:</span>
+        <span class="term-val" id="termScore">0.00 (0%)</span>
+      </div>
+      <div class="term-row">
+        <span class="term-key">ML CLASSIFIER:</span>
+        <span class="term-val" id="termMLProb">0.00%</span>
+      </div>
+      <div class="term-row">
+        <span class="term-key">SEMANTIC SIM:</span>
+        <span class="term-val" id="termSemSim">0.000 cosine</span>
+      </div>
+      <div class="term-row">
+        <span class="term-key">L1 KEYWORDS:</span>
+        <span class="term-val" id="termKeywords">None</span>
+      </div>
+      <div class="term-row">
+        <span class="term-key">L2A DOC ENGINE:</span>
+        <span class="term-val" id="termDocFlags">N/A (Direct Text Prompt)</span>
+      </div>
+      <div class="term-row">
+        <span class="term-key">LATENCY:</span>
+        <span class="term-val" id="termLatency">0.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="term-countdown-bar" id="termCountdownBar"></div>
+</aside>
 
 <script src="/app.js"></script>
 </body>

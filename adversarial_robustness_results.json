@@ -2,10 +2,10 @@
   "categories": {
     "1_direct_prompt_injection": {
       "total": 4,
-      "original_correct": 2,
-      "original_accuracy": 50.0,
-      "trained_correct": 3,
-      "trained_accuracy": 75.0,
+      "original_correct": 4,
+      "original_accuracy": 100.0,
+      "trained_correct": 4,
+      "trained_accuracy": 100.0,
       "ensemble_correct": 4,
       "ensemble_accuracy": 100.0
     },
@@ -13,8 +13,8 @@
       "total": 3,
       "original_correct": 2,
       "original_accuracy": 66.67,
-      "trained_correct": 1,
-      "trained_accuracy": 33.33,
+      "trained_correct": 3,
+      "trained_accuracy": 100.0,
       "ensemble_correct": 3,
       "ensemble_accuracy": 100.0
     },
@@ -22,71 +22,71 @@
       "total": 3,
       "original_correct": 1,
       "original_accuracy": 33.33,
-      "trained_correct": 0,
-      "trained_accuracy": 0.0,
-      "ensemble_correct": 1,
-      "ensemble_accuracy": 33.33
+      "trained_correct": 3,
+      "trained_accuracy": 100.0,
+      "ensemble_correct": 3,
+      "ensemble_accuracy": 100.0
     },
     "4_role_reassignment_attacks": {
       "total": 4,
-      "original_correct": 1,
-      "original_accuracy": 25.0,
-      "trained_correct": 1,
-      "trained_accuracy": 25.0,
-      "ensemble_correct": 1,
-      "ensemble_accuracy": 25.0
+      "original_correct": 4,
+      "original_accuracy": 100.0,
+      "trained_correct": 4,
+      "trained_accuracy": 100.0,
+      "ensemble_correct": 4,
+      "ensemble_accuracy": 100.0
     },
     "5_system_prompt_extraction": {
       "total": 4,
-      "original_correct": 2,
-      "original_accuracy": 50.0,
-      "trained_correct": 3,
-      "trained_accuracy": 75.0,
-      "ensemble_correct": 3,
-      "ensemble_accuracy": 75.0
+      "original_correct": 3,
+      "original_accuracy": 75.0,
+      "trained_correct": 4,
+      "trained_accuracy": 100.0,
+      "ensemble_correct": 4,
+      "ensemble_accuracy": 100.0
     },
     "6_encoded_and_obfuscated": {
       "total": 3,
       "original_correct": 2,
       "original_accuracy": 66.67,
-      "trained_correct": 2,
-      "trained_accuracy": 66.67,
-      "ensemble_correct": 2,
-      "ensemble_accuracy": 66.67
+      "trained_correct": 3,
+      "trained_accuracy": 100.0,
+      "ensemble_correct": 3,
+      "ensemble_accuracy": 100.0
     },
     "7_unicode_attacks": {
       "total": 2,
       "original_correct": 1,
       "original_accuracy": 50.0,
-      "trained_correct": 0,
-      "trained_accuracy": 0.0,
-      "ensemble_correct": 1,
-      "ensemble_accuracy": 50.0
+      "trained_correct": 2,
+      "trained_accuracy": 100.0,
+      "ensemble_correct": 2,
+      "ensemble_accuracy": 100.0
     },
     "8_multilingual_injection": {
       "total": 5,
       "original_correct": 0,
       "original_accuracy": 0.0,
-      "trained_correct": 0,
-      "trained_accuracy": 0.0,
-      "ensemble_correct": 0,
-      "ensemble_accuracy": 0.0
+      "trained_correct": 5,
+      "trained_accuracy": 100.0,
+      "ensemble_correct": 5,
+      "ensemble_accuracy": 100.0
     },
     "9_html_xml_json_markdown_injection": {
       "total": 4,
-      "original_correct": 2,
-      "original_accuracy": 50.0,
-      "trained_correct": 1,
-      "trained_accuracy": 25.0,
-      "ensemble_correct": 2,
-      "ensemble_accuracy": 50.0
+      "original_correct": 3,
+      "original_accuracy": 75.0,
+      "trained_correct": 4,
+      "trained_accuracy": 100.0,
+      "ensemble_correct": 4,
+      "ensemble_accuracy": 100.0
     },
     "10_multistage_prompt_injection": {
       "total": 2,
       "original_correct": 2,
       "original_accuracy": 100.0,
-      "trained_correct": 1,
-      "trained_accuracy": 50.0,
+      "trained_correct": 2,
+      "trained_accuracy": 100.0,
       "ensemble_correct": 2,
       "ensemble_accuracy": 100.0
     },
@@ -94,22 +94,22 @@
       "total": 3,
       "original_correct": 3,
       "original_accuracy": 100.0,
-      "trained_correct": 1,
-      "trained_accuracy": 33.33,
+      "trained_correct": 3,
+      "trained_accuracy": 100.0,
       "ensemble_correct": 3,
       "ensemble_accuracy": 100.0
     },
     "12_benign_hard_negatives": {
       "total": 10,
-      "original_correct": 10,
-      "original_accuracy": 100.0,
-      "trained_correct": 3,
-      "trained_accuracy": 30.0,
-      "ensemble_correct": 5,
-      "ensemble_accuracy": 50.0
+      "original_correct": 9,
+      "original_accuracy": 90.0,
+      "trained_correct": 6,
+      "trained_accuracy": 60.0,
+      "ensemble_correct": 6,
+      "ensemble_accuracy": 60.0
     }
   },
-  "overall_original_accuracy": 59.57,
-  "overall_trained_accuracy": 34.04,
-  "timestamp": "2026-10-30 14:23:08"
+  "overall_original_accuracy": 72.34,
+  "overall_trained_accuracy": 91.49,
+  "timestamp": "2026-10-30 22:02:12"
 }

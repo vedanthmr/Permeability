@@ -110,11 +110,18 @@ calculate_final_decision = None
 def _init_defense():
     global scan_prompt, parse_document, analyze_document, calculate_final_decision
     try:
-        from input_guard import scan_prompt as sp
-        scan_prompt = sp
+        from input_guard_trained import scan_prompt_trained as spt
+        scan_prompt = spt
         _mods["l1"] = True
-    except Exception as e:
-        _mods["l1_err"] = str(e)
+        _mods["l1_trained"] = True
+    except Exception as e1:
+        try:
+            from input_guard import scan_prompt as sp
+            scan_prompt = sp
+            _mods["l1"] = True
+            _mods["l1_trained"] = False
+        except Exception as e2:
+            _mods["l1_err"] = str(e2)
 
     try:
         from document_engine.document_engine import parse_document as pd
@@ -145,24 +152,44 @@ _init_defense()
 
 def run_defense_pipeline(prompt: str, file_path: str | None):
     r1, r1_flags, r1_kws = 0.0, [], []
+    detectors = {}
     if _mods["l1"] and scan_prompt:
         res = scan_prompt(prompt)
         r1 = float(res.get("r1", 0))
         r1_flags = res.get("flags", [])
         r1_kws = res.get("matched_keywords", [])
+        detectors = res.get("detectors", {})
 
     r2, div, l2_flags, l2_kws = 0.0, 0.0, [], []
     doc_text = ""
+    doc = {}
+    ext = None
     if file_path and _mods["l2a"] and _mods["l2b"]:
         ext = Path(file_path).suffix.lstrip(".").lower()
         doc = parse_document(file_path, ext)
         if doc.get("parse_failed"):
+            telemetry = {
+                "verdict": "MALICIOUS",
+                "final_score": 1.0,
+                "r1": r1,
+                "r2": 1.0,
+                "divergence": 1.0,
+                "ml_classifier_prob": 1.0,
+                "semantic_similarity": 0.0,
+                "layer1_keywords": r1_kws,
+                "layer1_flags": r1_flags,
+                "layer2_document_flags": "document_parse_failed",
+                "file_attached": True,
+                "file_type": ext,
+                "timestamp": datetime.now().isoformat(),
+            }
             return {
                 "r1": r1, "r2": 1.0, "divergence": 1.0, "final_score": 1.0,
                 "decision": "BLOCK",
                 "flags": r1_flags + ["document_parse_failed"],
                 "keywords": r1_kws,
                 "error": doc.get("error"),
+                "telemetry": telemetry,
             }
         doc_text = (doc.get("visible_text") or "")[:6000]
         l2_res = analyze_document(doc, prompt)
@@ -191,12 +218,49 @@ def run_defense_pipeline(prompt: str, file_path: str | None):
         else:
             decision = "SAFE"
 
+    # Extract live telemetry parameters
+    ml_prob = detectors.get("trained_model_prob")
+    if ml_prob is None:
+        ml_prob = r1
+    sem_sim = detectors.get("max_similarity", detectors.get("semantic_score", 0.0))
+
+    doc_flags_summary = []
+    if file_path:
+        if doc.get("hidden_text"):
+            doc_flags_summary.append("hidden_text")
+        if doc.get("embedded_scripts"):
+            doc_flags_summary.append("embedded_scripts")
+        if doc.get("hidden_flags"):
+            doc_flags_summary.extend(doc.get("hidden_flags"))
+        if not doc_flags_summary:
+            doc_flags_summary = ["clean_structure"]
+        doc_flags_str = ", ".join(sorted(set(doc_flags_summary)))
+    else:
+        doc_flags_str = "N/A (Direct Text Prompt)"
+
+    telemetry = {
+        "verdict": "MALICIOUS" if decision in ("BLOCK", "MALICIOUS") else decision,
+        "final_score": round(fscore, 3),
+        "r1": round(r1, 3),
+        "r2": round(r2, 3),
+        "divergence": round(div, 3),
+        "ml_classifier_prob": round(float(ml_prob), 4),
+        "semantic_similarity": round(float(sem_sim), 4),
+        "layer1_keywords": r1_kws,
+        "layer1_flags": r1_flags,
+        "layer2_document_flags": doc_flags_str,
+        "file_attached": bool(file_path),
+        "file_type": ext if file_path else None,
+        "timestamp": datetime.now().isoformat(),
+    }
+
     return {
         "r1": r1, "r2": r2, "divergence": div, "final_score": fscore,
         "decision": decision,
         "flags": r1_flags + l2_flags,
         "keywords": r1_kws + l2_kws,
         "doc_text": doc_text,
+        "telemetry": telemetry,
     }
 
 
@@ -874,6 +938,117 @@ async def chat(
         return JSONResponse({"error": "Internal server error."}, status_code=500)
 
 
+# ==================== SESSIONS PERSISTENCE API ====================
+SESSIONS_DIR = RUN_DIR / "sessions"
+SESSIONS_DIR.mkdir(exist_ok=True)
+
+
+@app.get("/api/sessions")
+async def list_sessions():
+    """List all stored user sessions sorted by updated_at desc."""
+    sessions = []
+    try:
+        for f in SESSIONS_DIR.glob("*.json"):
+            try:
+                with open(f, "r", encoding="utf-8") as s_file:
+                    data = json.load(s_file)
+                    sessions.append({
+                        "id": data.get("id", f.stem),
+                        "title": data.get("title", "Untitled Session"),
+                        "created_at": data.get("created_at", ""),
+                        "updated_at": data.get("updated_at", ""),
+                        "message_count": len(data.get("messages", [])),
+                    })
+            except Exception:
+                continue
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+    sessions.sort(key=lambda x: x.get("updated_at", ""), reverse=True)
+    return JSONResponse({"sessions": sessions})
+
+
+@app.get("/api/sessions/{session_id}")
+async def get_session(session_id: str):
+    """Retrieve full session state with message history and telemetry."""
+    safe_id = re.sub(r"[^a-zA-Z0-9_\-]", "", session_id)
+    s_path = SESSIONS_DIR / f"{safe_id}.json"
+    if not s_path.exists():
+        return JSONResponse({"error": "Session not found"}, status_code=404)
+    try:
+        with open(s_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return JSONResponse(data)
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.post("/api/sessions")
+async def save_session(request: Request):
+    """Save or update a chat session with message history and telemetry."""
+    try:
+        data = await request.json()
+        session_id = data.get("id")
+        if not session_id:
+            session_id = f"session_{int(time.time() * 1000)}"
+            data["id"] = session_id
+        safe_id = re.sub(r"[^a-zA-Z0-9_\-]", "", session_id)
+        if "updated_at" not in data:
+            data["updated_at"] = datetime.now().isoformat()
+        s_path = SESSIONS_DIR / f"{safe_id}.json"
+        with open(s_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        return JSONResponse({"ok": True, "id": safe_id})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.delete("/api/sessions/{session_id}")
+async def delete_session(session_id: str):
+    """Delete a chat session."""
+    safe_id = re.sub(r"[^a-zA-Z0-9_\-]", "", session_id)
+    s_path = SESSIONS_DIR / f"{safe_id}.json"
+    if s_path.exists():
+        try:
+            s_path.unlink()
+        except OSError:
+            pass
+    return JSONResponse({"ok": True})
+
+
+# ==================== WINDOWS EXE DOWNLOAD ROUTE ====================
+
+@app.get("/download/windows")
+async def download_windows_exe():
+    """Serve standalone Windows executable or redirect to release flow."""
+    exe_candidates = [
+        BASE_DIR / "dist" / "AdaptShield.exe",
+        RUN_DIR / "dist" / "AdaptShield.exe",
+        BASE_DIR / "dist" / "AdaptShield" / "AdaptShield.exe",
+        RUN_DIR / "dist" / "AdaptShield" / "AdaptShield.exe",
+        BASE_DIR / "dist" / "AdaptShield-Windows-x64.zip",
+        RUN_DIR / "dist" / "AdaptShield-Windows-x64.zip",
+    ]
+    for cand in exe_candidates:
+        if cand.exists() and cand.is_file():
+            return FileResponse(
+                cand,
+                media_type="application/octet-stream",
+                filename=cand.name,
+                headers={"Content-Disposition": f'attachment; filename="{cand.name}"'}
+            )
+
+    exe_url = os.environ.get("ADAPTSHIELD_EXE_URL", "").strip()
+    if exe_url:
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(exe_url)
+
+    return JSONResponse({
+        "status": "ready_to_build",
+        "message": "Standalone Windows executable can be built locally using 'python build_exe.py' or downloaded from GitHub Releases.",
+        "releases_url": "https://github.com/vedanthmr/Permeability/releases"
+    }, status_code=200)
+
+
 # ==================== SPA & APP ROUTES ====================
 STATIC_APP_DIR = (BASE_DIR / "static_app").resolve()
 
@@ -892,8 +1067,61 @@ async def spa_fallback(path: str):
     return FileResponse(STATIC_APP_DIR / "index.html")
 
 
+def start_server_in_thread(host: str, port: int):
+    # pyrefly: ignore[missing-import]
+    import uvicorn
+    uvicorn.run(app, host=host, port=port, log_level="warning")
+
+
 if __name__ == "__main__":
     # pyrefly: ignore[missing-import]
     import uvicorn
-    print(f"Starting AdaptShield on http://{APP_HOST}:{APP_PORT}")
-    uvicorn.run(app, host=APP_HOST, port=APP_PORT)
+    import threading
+    import webbrowser
+
+    is_desktop = "--desktop" in sys.argv or os.environ.get("ADAPTSHIELD_MODE") == "desktop"
+
+    if is_desktop:
+        print(f"Launching AdaptShield in Native Desktop Mode on http://{APP_HOST}:{APP_PORT}...")
+        t = threading.Thread(target=start_server_in_thread, args=(APP_HOST, APP_PORT), daemon=True)
+        t.start()
+
+        # Wait for server to come online
+        url = f"http://{APP_HOST}:{APP_PORT}"
+        server_ready = False
+        for _ in range(30):
+            try:
+                r = requests.get(f"{url}/status", timeout=1)
+                if r.ok:
+                    server_ready = True
+                    break
+            except Exception:
+                time.sleep(0.3)
+
+        opened_webview = False
+        try:
+            import webview
+            print("[Desktop] Initializing pywebview native window...")
+            webview.create_window(
+                "AdaptShield — AI Prompt & Document Security",
+                url,
+                width=1280,
+                height=820,
+                min_size=(960, 640)
+            )
+            opened_webview = True
+            webview.start()
+        except Exception as e:
+            print(f"[Desktop] pywebview initialization failed ({e}), opening default web browser...")
+
+        if not opened_webview:
+            webbrowser.open(url)
+            print(f"AdaptShield active at {url}. Press Ctrl+C in console to terminate.")
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                print("\nShutting down AdaptShield.")
+    else:
+        print(f"Starting AdaptShield on http://{APP_HOST}:{APP_PORT}")
+        uvicorn.run(app, host=APP_HOST, port=APP_PORT)

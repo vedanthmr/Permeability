@@ -5,37 +5,37 @@
    Fonts: Inter (sans) · JetBrains Mono (mono)
 ═══════════════════════════════════════════════════════ */
 
-/* ── 1. DESIGN TOKENS ── */
+/* ── 1. DESIGN TOKENS (Emerald Prestige Theme) ── */
 :root {
   /* backgrounds */
-  --bg:          #03050a;
-  --bg-alt:      #050811;
-  --card:        #0a101d;
-  --card-dk:     #070c17;
-  --well:        #060c1a;
+  --bg:          #081C15;
+  --bg-alt:      #0d281e;
+  --card:        #1B4432;
+  --card-dk:     #123224;
+  --well:        #081C15;
   /* borders */
-  --border:      rgba(255,255,255,0.05);
-  --border-hov:  rgba(255,255,255,0.12);
+  --border:      rgba(235, 242, 250, 0.08);
+  --border-hov:  rgba(235, 242, 250, 0.20);
   /* accent */
-  --accent:      #e74c3c;
-  --accent-dk:   #c0392b;
-  --accent-glow: rgba(231,76,60,0.18);
-  --accent-bord: rgba(231,76,60,0.35);
+  --accent:      #036666;
+  --accent-dk:   #024747;
+  --accent-glow: rgba(3, 102, 102, 0.35);
+  --accent-bord: rgba(114, 239, 221, 0.4);
   /* text */
-  --txt:         #f8fafc;
+  --txt:         #EBF2FA;
   --txt2:        #cbd5e1;
-  --txt3:        #94a3b8;
-  --txt4:        #64748b;
+  --txt3:        #9DB4C0;
+  --txt4:        #6D8A96;
   /* verdicts */
-  --safe:        #10b981;
-  --safe-bg:     rgba(16,185,129,0.12);
-  --warn:        #f59e0b;
-  --warn-bg:     rgba(245,158,11,0.12);
+  --safe:        #27c93f;
+  --safe-bg:     rgba(39, 201, 63, 0.12);
+  --warn:        #FBB02D;
+  --warn-bg:     rgba(251, 176, 45, 0.12);
   --block:       #ef4444;
-  --block-bg:    rgba(239,68,68,0.13);
-  --div-col:     #a855f7;
+  --block-bg:    rgba(239, 68, 68, 0.14);
+  --div-col:     #FBB02D;
   /* nav */
-  --nav-bg:      rgba(3,5,10,0.80);
+  --nav-bg:      rgba(8, 28, 21, 0.88);
   /* misc */
   --radius-sm:   0.5rem;
   --radius:      1rem;
@@ -1509,4 +1509,196 @@ code {
   .features-grid { grid-template-columns: 1fr; }
   .score-grid { grid-template-columns: 1fr 1fr; }
   .demo-header { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── NAV DOWNLOAD BUTTON ── */
+.nav-download-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(3, 102, 102, 0.4);
+  border: 1px solid rgba(114, 239, 221, 0.4);
+  color: #72efdd !important;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  transition: all 0.15s;
+}
+.nav-download-link:hover {
+  background: rgba(3, 102, 102, 0.8);
+  border-color: #72efdd;
+  transform: translateY(-1px);
+}
+
+/* ── TOP-RIGHT macOS TERMINAL HEURISTIC POPUP ── */
+.macos-terminal-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  width: 390px;
+  max-width: calc(100vw - 32px);
+  background: rgba(8, 28, 21, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(3, 102, 102, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(3, 102, 102, 0.25);
+  overflow: hidden;
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 12px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.macos-terminal-popup.popup-hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.macos-terminal-popup.verdict-safe {
+  border-color: #27c93f;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(39, 201, 63, 0.35);
+}
+
+.macos-terminal-popup.verdict-warn {
+  border-color: #FBB02D;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(251, 176, 45, 0.4);
+}
+
+.macos-terminal-popup.verdict-malicious {
+  border-color: #ef4444;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(239, 68, 68, 0.55);
+}
+
+.terminal-header {
+  height: 32px;
+  background: rgba(13, 17, 23, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  position: relative;
+  user-select: none;
+}
+
+.traffic-lights {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  position: absolute;
+  left: 12px;
+}
+
+.traffic-light {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.light-red {
+  background: #ff5f56;
+  border: 1px solid #e0443e;
+}
+
+.light-yellow {
+  background: #ffbd2e;
+  border: 1px solid #dea123;
+  cursor: default;
+}
+
+.light-green {
+  background: #27c93f;
+  border: 1px solid #1aab29;
+  cursor: default;
+}
+
+.terminal-title {
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+  color: #8b949e;
+  font-weight: 500;
+}
+
+.terminal-body {
+  padding: 14px 16px;
+  color: #c9d1d9;
+}
+
+.term-command-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.term-prompt {
+  color: #58a6ff;
+  font-weight: 700;
+}
+
+.term-cmd {
+  color: #79c0ff;
+}
+
+.term-output-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.term-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  line-height: 1.4;
+}
+
+.term-key {
+  color: #8b949e;
+  font-weight: 600;
+  font-size: 11px;
+  min-width: 110px;
+}
+
+.term-val {
+  color: #f0f6fc;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+  flex: 1;
+}
+
+.term-verdict {
+  font-weight: 700;
+}
+
+.verdict-safe .term-verdict { color: #27c93f; }
+.verdict-warn .term-verdict { color: #FBB02D; }
+.verdict-malicious .term-verdict { color: #ef4444; }
+
+.term-countdown-bar {
+  height: 3px;
+  background: #FBB02D;
+  width: 100%;
+  transform-origin: left;
+  display: none;
+}
+
+.term-countdown-bar.active {
+  display: block;
+  animation: countdown-timer-web 8s linear forwards;
+}
+
+@keyframes countdown-timer-web {
+  0% { transform: scaleX(1); }
+  100% { transform: scaleX(0); }
 }

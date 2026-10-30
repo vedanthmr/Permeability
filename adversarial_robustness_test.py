@@ -124,6 +124,7 @@ def run_robustness_benchmark():
     classifier, vectorizer = None, None
     classifier_path = BASE_DIR / "models" / "trained_prompt_injection" / "classifier.joblib"
     if classifier_path.exists():
+        # pyrefly: ignore[missing-import]
         import joblib
         from sklearn.feature_extraction.text import HashingVectorizer
         classifier = joblib.load(classifier_path)
